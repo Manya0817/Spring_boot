@@ -48,6 +48,8 @@ public class EmployeeEntity {
     private LocalDate dateOfJoining;
     @JsonProperty("isActive")
     private Boolean isActive;
+    private String role;
+    private Double salary;
     public void setId(Long employeeId) {
         id=employeeId;
     }
