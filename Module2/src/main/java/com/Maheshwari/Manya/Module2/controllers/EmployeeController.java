@@ -4,21 +4,19 @@ import com.Maheshwari.Manya.Module2.dto.EmployeeDTO;
 import com.Maheshwari.Manya.Module2.entities.EmployeeEntity;
 import com.Maheshwari.Manya.Module2.repositories.EmployeeRepository;
 import com.Maheshwari.Manya.Module2.services.EmployeeService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
-@RequestMapping(path="/employees")
+@RequestMapping(path = "/employees")
 public class EmployeeController {
-//    @GetMapping(path="/getSecretMessage")
-//    public String getMySuperSecretMessage(){
-//        return "Secret message : your_secret";
-//    }
-
-//    private final EmployeeRepository employeeRepository;
 
     private final EmployeeService employeeService;
 
@@ -26,32 +24,45 @@ public class EmployeeController {
         this.employeeService = employeeService;
     }
 
-//    public EmployeeController(EmployeeRepository employeeRepository) {
-//        this.employeeRepository = employeeRepository;
-//    }
-
-    @GetMapping(path="/{employeeId}")
-    public EmployeeDTO getEmployeeById(@PathVariable(name="employeeId") Long id){
-//        return new EmployeeDTO(id,"Manya","maheshwarimanya@gmail.com",22, LocalDate.of(2026,01,23),true);
-//        return employeeRepository.findById(id).orElse(null);
-        return employeeService.getEmployeeById(id);
+    @GetMapping(path = "/{employeeId}")
+    public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable(name = "employeeId") Long id) {
+        Optional<EmployeeDTO> employeeDTO = employeeService.getEmployeeById(id);
+        return employeeDTO
+                .map(employeeDTO1 -> ResponseEntity.ok(employeeDTO1))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping
-    public List<EmployeeDTO> getAllEmployees(@RequestParam(required = false,name="inputAge") Integer age,
-                                                @RequestParam(required = false) String sortBy){
-//        return "Hi age "+age+" "+sortBy;
-        return employeeService.getAllEmployees();
+    public ResponseEntity<List<EmployeeDTO>> getAllEmployees(@RequestParam(required = false, name = "inputAge") Integer age,
+                                                             @RequestParam(required = false) String sortBy) {
+        return ResponseEntity.ok(employeeService.getAllEmployees());
     }
 
     @PostMapping
-    public EmployeeDTO createNewEmployee(@RequestBody EmployeeDTO inputEmployee){
-//        inputEmployee.setId(100L);
-//        return inputEmployee;
-        return employeeService.createNewEmployee(inputEmployee);
+    public ResponseEntity<EmployeeDTO> createNewEmployee(@RequestBody EmployeeDTO inputEmployee) {
+        EmployeeDTO savedEmployee = employeeService.createNewEmployee(inputEmployee);
+        return new ResponseEntity<>(savedEmployee, HttpStatus.CREATED);
     }
 
-    @PutMapping String updateEmployeeById(){
-        return "Hello from put";
+
+    @PutMapping(path = "/{employeeId}")
+    public ResponseEntity<EmployeeDTO> updateEmployeeById(@RequestBody EmployeeDTO employeeDTO, @PathVariable Long employeeId) {
+        return ResponseEntity.ok(employeeService.updateEmployeeById(employeeId, employeeDTO));
     }
+
+    @DeleteMapping(path = "/{employeeId}")
+    public ResponseEntity<Boolean> deleteEmployeeById(@PathVariable Long employeeId) {
+        boolean gotDeleted = employeeService.deleteEmployeeById(employeeId);
+        if (gotDeleted) return ResponseEntity.ok(true);
+        return ResponseEntity.notFound().build();
+    }
+
+    @PatchMapping(path = "/{employeeId}")
+    public ResponseEntity<EmployeeDTO> updatePartialEmployeeById(@RequestBody Map<String, Object> updates,
+                                                                 @PathVariable Long employeeId) {
+        EmployeeDTO employeeDTO = employeeService.updatePartialEmployeeById(employeeId, updates);
+        if (employeeDTO == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(employeeDTO);
+    }
+
 }
