@@ -2,6 +2,7 @@ package com.Maheshwari.Manya.Module2.controllers;
 
 import com.Maheshwari.Manya.Module2.dto.EmployeeDTO;
 import com.Maheshwari.Manya.Module2.entities.EmployeeEntity;
+import com.Maheshwari.Manya.Module2.exceptions.ResourceNotFoundException;
 import com.Maheshwari.Manya.Module2.repositories.EmployeeRepository;
 import com.Maheshwari.Manya.Module2.services.EmployeeService;
 import jakarta.validation.Valid;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
@@ -30,7 +32,7 @@ public class EmployeeController {
         Optional<EmployeeDTO> employeeDTO = employeeService.getEmployeeById(id);
         return employeeDTO
                 .map(employeeDTO1 -> ResponseEntity.ok(employeeDTO1))
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(()->new ResourceNotFoundException("Employee not found with id :" +id));
     }
 
     @GetMapping

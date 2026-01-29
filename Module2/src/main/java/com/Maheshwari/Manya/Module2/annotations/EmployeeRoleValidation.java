@@ -1,6 +1,8 @@
 package com.Maheshwari.Manya.Module2.annotations;
 
 import jakarta.persistence.Table;
+import jakarta.validation.Constraint;
+import jakarta.validation.Payload;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
