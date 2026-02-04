@@ -46,7 +46,7 @@ public class MainClass {
 //        Map<String,Integer> fruitsMap=
 //                fruits
 //                        .stream()
-////                        .map(fruit->fruit.length())
+//                       .map(fruit->fruit.length())
 //                        .collect(Collectors.toMap(
 //                                fruit->fruit,
 //                                fruit->fruit.length()
@@ -75,8 +75,8 @@ public class MainClass {
 //        stream
 //                .filter(fruit->fruit.length()<6)
 //                .sorted()
-////                .map(fruit->fruit.length())
-////                .map(fruitLength->2*fruitLength)
+//                .map(fruit->fruit.length())
+//                .map(fruitLength->2*fruitLength)
 //                .forEach(fruit-> System.out.println(fruit));
 
         Stream<String> stream=fruits.stream();
