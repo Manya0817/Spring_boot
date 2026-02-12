@@ -28,6 +28,11 @@ public class PatientServiceTest {
 //        int rowsAffected=patientRepository.updatePatientNameWithId("Manya Maheshwari",1L);
 //        System.out.println(rowsAffected);
 
-        patientService.testPatientTransaction();
+//        patientService.testPatientTransaction();
+
+        List<Patient> patientList=patientRepository.getAllPatientsWithAppointments();
+        for(var p:patientList){
+            System.out.println(p);
+        }
     }
 }
