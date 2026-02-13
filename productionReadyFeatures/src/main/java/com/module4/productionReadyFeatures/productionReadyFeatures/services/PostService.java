@@ -1,0 +1,14 @@
+package com.module4.productionReadyFeatures.productionReadyFeatures.services;
+
+import com.module4.productionReadyFeatures.productionReadyFeatures.dto.PostDTO;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+public interface PostService {
+    List<PostDTO> getAllPosts();
+    PostDTO createNewPost(PostDTO inputPost);
+
+    PostDTO getPostById(Long postId);
+
+}
