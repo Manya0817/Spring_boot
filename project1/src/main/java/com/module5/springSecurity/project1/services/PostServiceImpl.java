@@ -2,10 +2,14 @@ package com.module5.springSecurity.project1.services;
 
 import com.module5.springSecurity.project1.dto.PostDTO;
 import com.module5.springSecurity.project1.entities.PostEntity;
+import com.module5.springSecurity.project1.entities.User;
 import com.module5.springSecurity.project1.exceptions.ResourceNotFoundException;
 import com.module5.springSecurity.project1.repositories.PostRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.XSlf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +17,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PostServiceImpl implements PostService{
 
     private final PostRepository postRepository;
@@ -35,6 +40,8 @@ public class PostServiceImpl implements PostService{
 
     @Override
     public PostDTO getPostById(Long postId) {
+        User user=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        log.info("User {}",user);
         PostEntity postEntity=postRepository
                 .findById(postId)
                 .orElseThrow(()->new ResourceNotFoundException("Page not found with id "+postId));
