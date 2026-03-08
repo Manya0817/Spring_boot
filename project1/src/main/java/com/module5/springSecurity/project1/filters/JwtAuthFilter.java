@@ -1,6 +1,8 @@
 package com.module5.springSecurity.project1.filters;
 
+import com.module5.springSecurity.project1.entities.SessionEntity;
 import com.module5.springSecurity.project1.entities.User;
+import com.module5.springSecurity.project1.repositories.SessionRepository;
 import com.module5.springSecurity.project1.services.JwtService;
 import com.module5.springSecurity.project1.services.UserService;
 import jakarta.servlet.FilterChain;
@@ -18,6 +20,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -25,6 +28,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserService userService;
+    @Autowired
+    private SessionRepository sessionRepository;
+
     @Autowired
     @Qualifier("handlerExceptionResolver")
     private HandlerExceptionResolver handlerExceptionResolver;
@@ -40,6 +46,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             String token=requestTokenHeader.split("Bearer ")[1];
 
+            Optional<SessionEntity> session = sessionRepository.findByToken(token);
+
+            if(session.isEmpty()){
+                filterChain.doFilter(request,response);
+                return;
+            }
             Long userId=jwtService.getUserIdFromToken(token);
             if(userId!=null && SecurityContextHolder.getContext().getAuthentication()==null){
                 User user=userService.getUserById(userId);

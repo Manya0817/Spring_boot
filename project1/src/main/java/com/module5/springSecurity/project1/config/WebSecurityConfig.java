@@ -1,8 +1,10 @@
 package com.module5.springSecurity.project1.config;
 
 import com.module5.springSecurity.project1.filters.JwtAuthFilter;
+import com.module5.springSecurity.project1.filters.LoggingFilter;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.internal.bytebuddy.build.Plugin;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,6 +29,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
+    private final LoggingFilter loggingFilter;
+
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
         httpSecurity
@@ -38,11 +42,11 @@ public class WebSecurityConfig {
                         csrfConfig.disable())
                 .sessionManagement(sessionConfig->sessionConfig
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(loggingFilter, JwtAuthFilter.class)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .formLogin(Customizer.withDefaults());
 //                .formLogin(formLoginConfig->formLoginConfig
 //                        .loginPage("/newLogin.hml"))
-
         return httpSecurity.build();
     }
 
