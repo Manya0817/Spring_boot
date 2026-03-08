@@ -46,12 +46,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             String token=requestTokenHeader.split("Bearer ")[1];
 
-            Optional<SessionEntity> session = sessionRepository.findByToken(token);
-
-            if(session.isEmpty()){
-                filterChain.doFilter(request,response);
-                return;
-            }
+//            Optional<SessionEntity> session = sessionRepository.findByToken(token);
+//
+//            if(session.isEmpty()){
+//                filterChain.doFilter(request,response);
+//                return;
+//            }
             Long userId=jwtService.getUserIdFromToken(token);
             if(userId!=null && SecurityContextHolder.getContext().getAuthentication()==null){
                 User user=userService.getUserById(userId);
