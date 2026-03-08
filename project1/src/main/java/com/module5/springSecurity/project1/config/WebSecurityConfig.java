@@ -2,6 +2,7 @@ package com.module5.springSecurity.project1.config;
 
 import com.module5.springSecurity.project1.filters.JwtAuthFilter;
 import com.module5.springSecurity.project1.filters.LoggingFilter;
+import com.module5.springSecurity.project1.handlers.OAuth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.internal.bytebuddy.build.Plugin;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +30,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final LoggingFilter loggingFilter;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
         httpSecurity
                 .authorizeHttpRequests(auth->auth
-                        .requestMatchers("/posts","/error","/auth/**").permitAll()
+                        .requestMatchers("/posts","/error","/auth/**","/home.html").permitAll()
 //                        .requestMatchers("/posts/**").hasAnyRole("ADMIN")
                         .anyRequest().authenticated())
                 .csrf(csrfConfig->
@@ -43,7 +45,10 @@ public class WebSecurityConfig {
                 .sessionManagement(sessionConfig->sessionConfig
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 //                .addFilterBefore(loggingFilter, JwtAuthFilter.class)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .oauth2Login(oauth2Config->oauth2Config
+                        .failureUrl("/login?error=true")
+                        .successHandler(oAuth2SuccessHandler));
 //                .formLogin(Customizer.withDefaults());
 //                .formLogin(formLoginConfig->formLoginConfig
 //                        .loginPage("/newLogin.hml"))
